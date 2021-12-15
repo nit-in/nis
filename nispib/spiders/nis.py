@@ -51,7 +51,7 @@ class NISSpider(scrapy.Spider):
 	def parse_js(self,response):
 		for i in response.xpath("//i[contains(@class, 'fa fa-download')]"):
 			self.nis_mag_link = i.xpath("//../a[contains(@href,'.pdf')]/@href").get()
-			self.download_mag(self.nis_mag_link, self.rel_lang_str, self.rel_fortnight_str, self.rel_month_str, self.rel_year)
+			self.download_mag(self.nis_mag_link.replace('http:', 'https:'), self.rel_lang_str, self.rel_fortnight_str, self.rel_month_str, self.rel_year)
 
 	def download_mag(self,mag_link, mag_lang, mag_fn, mag_month, mag_year):
 

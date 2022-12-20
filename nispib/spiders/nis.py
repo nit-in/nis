@@ -78,22 +78,23 @@ class NISSpider(scrapy.Spider):
 			subprocess.run([program, arg1, arg2, arg3, str(mag_link), arg4, str(mag_path)], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 	def lang_name(self, lang_code):
-		lang={
-		1: "English",
-		2: "Hindi", 
-		3: "Urdu",
-		4: "Bengali", 
-		6: "Punjabi",
-		8: "Kannada", 
-		9: "Marathi", 
-		10: "Assamese",
-		11: "Tamil", 
-		13: "Gujarati",
-		15: "Malayalam",
-		16: "Telugu",
-		18: "Odia"
+		lang_names = {
+		'1' : "English",
+		'2' : "Hindi",
+		'3' : "Urdu",
+		'4' : "Bengali",
+		'6' : "Punjabi",
+		'8' : "Kannada",
+		'9' : "Marathi",
+		'10' : "Assamese",
+		'11' : "Tamil",
+		'13' : "Gujarati",
+		'15' : "Malayalam",
+		'16' : "Telugu",
+		'18' : "Odia"
 		}
-		return lang[lang_code]
+		lang_name = lang_names.get(lang_code)
+		return lang_name
 
 	def check_folder(self, fpath):
 		if not fpath.exists():

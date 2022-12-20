@@ -37,7 +37,7 @@ jobs:
       - name: first fortnight
         run:  |
           source .env
-          for lang in 1,2,3,4,6,8,9,10,11,13,15,16,18;
+          for lang in 1 2 3 4 6 8 9 10 11 13 15 16 18;
           do
             nis $lang ${{ env.NIS_FIRST_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
           done
@@ -45,7 +45,7 @@ jobs:
       - name: second fortnight
         run:  |
           source .env
-          for lang in 1,2,3,4,6,8,9,10,11,13,15,16,18;
+          for lang in 1 2 3 4 6 8 9 10 11 13 15 16 18;
           do
             nis $lang ${{ env.NIS_SECOND_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
           done
@@ -61,7 +61,7 @@ jobs:
             mv $i /home/runner/pdfs/${bname}
           done
 
-      - name: Create Link text files
+      - name: Create links
         uses: ncipollo/release-action@v1
         with:
           artifacts: "/home/runner/pdfs/*.pdf"

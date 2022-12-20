@@ -57,7 +57,8 @@ jobs:
           for i in /home/runner/NIS/**/**.pdf;
           do
             echo $i
-            mv $i /home/runner/pdfs/$i
+            bname=$(basename ${i})
+            mv $i /home/runner/pdfs/${bname}
           done
 
       - name: Create Link text files

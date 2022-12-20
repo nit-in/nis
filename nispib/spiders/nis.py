@@ -24,7 +24,6 @@ class NISSpider(scrapy.Spider):
 
 	def start_requests(self):
 
-		self.rel_lang = 1
 		self.rel_lang_str = self.lang_name(self.rel_lang)
 
 		if str(self.rel_fort_night) == "1":

@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NIS_LANG: 1
       NIS_FIRST_FORTNIGHT: 1
       NIS_SECOND_FORTNIGHT: 2
 
@@ -30,60 +29,42 @@ jobs:
       - name: set env
         run:  |
           echo ${{ github.ref_name }}
-          PIB_TAG=${{ github.ref_name }}
-          echo "NIS_MONTH=$(echo ${PIB_TAG} | egrep -o '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)')" >> $GITHUB_ENV
-          echo "NIS_YEAR=$(echo ${PIB_TAG} | egrep -o '202[0-9]')" >> $GITHUB_ENV
+          NIS_TAG=${{ github.ref_name }}
+          echo "NIS_MONTH=$(echo ${NIS_TAG} | egrep -o '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)')" >> $GITHUB_ENV
+          echo "NIS_YEAR=$(echo ${NIS_TAG} | egrep -o '202[0-9]')" >> $GITHUB_ENV
 
 
       - name: first fortnight
         run:  |
           source .env
-          nis ${{ env.NIS_LANG }} ${{ env.NIS_FIRST_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
-
+          for lang in 1,2,3,4,6,8,9,10,11,13,15,16,18;
+          do
+            nis $lang ${{ env.NIS_FIRST_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
+          done
+ 
       - name: second fortnight
         run:  |
           source .env
-          nis ${{ env.NIS_LANG }} ${{ env.NIS_SECOND_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
+          for lang in 1,2,3,4,6,8,9,10,11,13,15,16,18;
+          do
+            nis $lang ${{ env.NIS_SECOND_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
+          done
 
-      - name: zipup_first_ft
+      - name: copy files
         run:  |
-          cd /home/runner/NIS/${{ env.NIS_YEAR }}/${{ env.NIS_MONTH }}
-          zip -r "/home/runner/NIS_ENG_Fortnight_${{ env.NIS_FIRST_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip" Fortnight_${{ env.NIS_FIRST_FORTNIGHT }}
+          shopt -s globstar
+          mkdir -p /home/runner/pdfs
+          for i in /home/runner/NIS/**/**.pdf;
+          do
+            echo $i
+            mv $i /home/runner/pdfs/$i
+          done
 
-      - name: zipup_seconf_ft
-        run:  |
-          cd /home/runner/NIS/${{ env.NIS_YEAR }}/${{ env.NIS_MONTH }}
-          zip -r "/home/runner/NIS_ENG_Fortnight_${{ env.NIS_SECOND_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip" Fortnight_${{ env.NIS_SECOND_FORTNIGHT }}
-     
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.NIS }}
+      - name: Create Link text files
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: first fortnight zip
-        id: upload-release-asset-f1
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.NIS }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /home/runner/NIS_ENG_Fortnight_${{ env.NIS_FIRST_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip
-          asset_name: NIS_ENG_Fortnight_${{ env.NIS_FIRST_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip
-          asset_content_type: application/zip
-
-      - name: second fortnight zip
-        id: upload-release-asset-f2
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.NIS }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: /home/runner/NIS_ENG_Fortnight_${{ env.NIS_SECOND_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip
-          asset_name: NIS_ENG_Fortnight_${{ env.NIS_SECOND_FORTNIGHT }}_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}.zip
-          asset_content_type: application/zip
+          artifacts: "/home/runner/pdfs/*.pdf"
+          token: ${{ secrets.NIS }}
+          tag: "NIS_${{ env.NIS_MONTH }}_${{ env.NIS_YEAR }}"
+          allowUpdates: true
+          body : "NIS articles links for the month of ${{ env.NIS_MONTH }}, ${{ env.NIS_YEAR }}"

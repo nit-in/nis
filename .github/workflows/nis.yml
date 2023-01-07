@@ -41,6 +41,7 @@ jobs:
           do
             echo $lang
             nis_debug $lang ${{ env.NIS_FIRST_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
+            sleep 5m
           done
  
       - name: second fortnight
@@ -50,6 +51,7 @@ jobs:
           do
             echo $lang
             nis_debug $lang ${{ env.NIS_SECOND_FORTNIGHT }} ${{ env.NIS_MONTH }} ${{ env.NIS_YEAR }}
+            sleep 5m
           done
 
       - name: copy files
